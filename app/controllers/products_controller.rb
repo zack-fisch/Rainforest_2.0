@@ -1,4 +1,5 @@
 class ProductsController < ApplicationController
+  before_filter :ensure_logged_in, :only => [:show]
   def index
   	@products = Product.all
   end
@@ -48,6 +49,13 @@ class ProductsController < ApplicationController
   private
   def product_params
   	params.require(:product).permit(:name, :description, :price_in_cents)
+  end
+
+  def ensure_logged_in
+    unless current_user
+      flash[:alert] = "Please log in"
+      redirect_to new_session_path
+    end
   end
 
 end
